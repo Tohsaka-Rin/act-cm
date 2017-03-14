@@ -1,0 +1,445 @@
+
+接口1. 注册 
+客户端->服务端 								服务端->客户端
+name 										result		0:成功  -1 失败
+sex
+birthday
+userName
+password
+cellphone
+weChat
+mail
+title
+hospital
+department
+userGroup
+
+说明：
+1. 用户名/邮箱/手机号都是要确保唯一性的，所以需要在填写之后就进行检查，对于接口2
+
+
+接口2. 用户名/邮箱/手机号 重复性检验
+客户端->服务端 								服务端->客户端
+key											result  	0:未被注册  -1:已被注册
+value
+
+
+说明：
+1. key 有三种取值，userName/mail/cellphone  . value对应着某一种的值。
+
+
+接口3. 登录   返回用户基本信息
+客户端->服务端 								服务端->客户端
+userName									result  	0:成功  -1:失败
+password									D_id  医生的唯一编号
+
+
+说明：
+1. 之后医生的一切请求都得使用D_id来辨别是哪个医生发来的请求。
+2. 完善阶段可能还会加上一个随机码进行时效验证。
+
+
+接口4. 找回密码
+客户端->服务端 								服务端->客户端
+D_id 										result  	0:邮箱/手机存在，已发送  -1:失败
+type 	1邮箱，2短信
+mail_cellphone
+
+
+接口5. 获取医生基本信息
+客户端->服务端 								服务端->客户端
+D_id										result 		0:成功  -1:失败
+											name
+											userName
+											cellphone
+											mail
+											hospital
+											department
+
+
+接口6. 获取用户详细信息信息
+客户端->服务端 								服务端->客户端
+D_id										name
+											sex
+											birthday
+											userName
+											password
+											cellphone
+											weChat
+											mail
+											title
+											hospital
+											department
+											userGroup
+
+
+
+接口7. 修改用户信息
+客户端->服务端 								服务端->客户端										
+D_id										result		0:成功  -1:失败
+name 										
+sex
+birthday
+userName
+password
+cellphone
+weChat
+mail
+title
+hospital
+department
+userGroup
+
+说明：
+1. 也可以只发送修改项的信息，看前端怎么好实现了
+
+
+接口8. 查看医生自己创建的所有实验组
+客户端->服务端 								服务端->客户端
+D_id 										[{G_id,name,information,date},....]
+
+说明：
+1. 查不到返回一个空的列表
+
+
+接口9. 查看某个实验组所有病人的基本信息
+客户端->服务端 								服务端->客户端
+D_id 										[{P_id,name,age,sex,cellphone,clinicTime,emergencyTime,hospitalTime,healthStatus},{...},...]
+G_id
+
+说明：
+1. 查不到返回一个空的列表
+
+
+接口10. 创建实验组
+客户端->服务端 								服务端->客户端
+D_id										result		0:成功  -1:失败
+name
+information
+
+接口11. 删除实验组
+客户端->服务端 								服务端->客户端
+D_id 										result		0:成功  -1:失败
+G_id
+
+
+接口12. 编辑实验组信息
+D_id 										result		0:成功  -1:失败
+G_id
+name
+information
+
+
+接口13. 向实验组中添加某个患者
+D_id 										result		0:成功  -1:失败
+G_id
+P_id
+
+
+接口14. 删除实验组中某个患者
+D_id 										result		0:成功  -1:失败
+G_id
+P_id
+
+
+
+
+接口15. 获取医生对应的所有患者的基本信息
+客户端->服务端 								服务端->客户端
+D_id										[{P_id,name,age,sex,cellphone,clinicTime,emergencyTime,hospitalTime,healthStatus},{...},...]
+
+
+接口16. 获取指定患者的详细信息
+客户端->服务端 								服务端->客户端
+D_id										sign
+P_id										name
+											sex
+											birthday
+											age
+											nation
+											height
+											weight
+											admissionTime
+											education
+											career
+											marriage
+											photo
+											homeAddr
+											birthAddr
+											activityAddr1
+											activityAddr2
+											actionAddr
+											diastolicPressure
+											systolicPressure
+											neckCircu
+											payment
+											telephone
+											cellphone
+											partnerPhone
+											groupName
+											groupInfo
+
+说明：
+1. groupName/groupInfo是Table4/5里的实验组名称，没有加入实验组时默认为 null ?
+
+
+
+接口17. 添加患者个人信息
+客户端->服务端 								服务端->客户端
+D_id 										result		0:成功  -1:失败
+P_id										
+sign										
+name
+sex
+birthday
+age
+nation
+height
+weight
+admissionTime
+education
+career
+marriage
+photo
+homeAddr
+birthAddr
+activityAddr1
+activityAddr2
+actionAddr
+diastolicPressure
+systolicPressure
+neckCircu
+payment
+telephone
+cellphone
+partnerPhone
+G_id
+
+说明：
+1. 患者的编号P_id是由医生来填的，并不是自动生成的
+2. G_id可以让医生先通过接口8查询之后再填
+
+
+
+接口18. 修改患者个人信息
+客户端->服务端 								服务端->客户端
+D_id 										result		0:成功  -1:失败
+P_id										
+sign										
+name
+sex
+birthday
+age
+nation
+height
+weight
+admissionTime
+education
+career
+marriage
+photo
+homeAddr
+birthAddr
+activityAddr1
+activityAddr2
+actionAddr
+diastolicPressure
+systolicPressure
+neckCircu
+payment
+telephone
+cellphone
+partnerPhone
+G_id
+
+说明：
+1. G_id做成一个选择下拉框，利用接口从服务器获取该医生的实验组，然后让其从中选择一个
+
+
+
+接口19. 查看患者家属信息
+客户端->服务端 								服务端->客户端
+D_id 										[{name,sex,telephone,cellphone,weChat,mail,homeAddr},{...},...]
+P_id
+
+接口20.修改患者家属信息
+客户端->服务端 								服务端->客户端
+D_id 										result		0:成功  -1:失败
+P_id
+R_id										
+name
+sex
+telephone
+cellphone
+weChat
+mail
+homeAddr
+
+
+
+
+接口21. 添加新的患者家属
+客户端->服务端 								服务端->客户端
+D_id 										result		0:成功  -1:失败
+P_id
+R_id
+name
+sex
+telephone
+cellphone
+weChat
+mail
+homeAddr
+
+说明：
+1. 可能会判断是否已填过该家属
+
+
+接口22. 删除指定的患者家属
+客户端->服务端 								服务端->客户端
+D_id 										result 	0 成功   -1 失败
+P_id
+R_id
+
+
+/**********************************************************这一块很繁琐**********************************************************/
+
+接口23.获取门诊/急诊/住院相关的基本信息
+客户端->服务端 								服务端->客户端
+D_id
+P_id
+kind
+type
+X_id(默认-1)
+
+kind:
+0 	X = 门诊
+1 	X = 急诊
+2 	X = 住院
+
+
+type:
+0 	获取患者所有X的基本信息，不需要填X_id
+1   获取 X 对应的所有临床基本信息
+2   获取 X 对应的所有问卷基本信息
+
+
+接口24.获取指定门诊/急诊/住院相关的详细信息
+客户端->服务端 								服务端->客户端
+D_id
+P_id
+kind
+type
+X_id
+Y_id(默认-1)
+
+kind:
+0 	X = 门诊
+1 	X = 急诊
+2 	X = 住院
+
+type:
+0 	获取指定 X 的详细信息不需要填Y_id
+1   获取 X 对应的 id为Y_id 临床详细信息
+2   获取 X 对应的 id为Y_id 问卷详细信息
+3   获取 X 对应的 id为Y_id 辅助检查详细信息
+4   获取 X 对应的 id为Y_id 附件详细信息
+
+
+
+
+
+接口25. 添加门诊/急诊/住院相关的信息
+客户端->服务端 								服务端->客户端
+D_id 										result 	0 成功   -1 患者已存在
+P_id
+kind
+type
+X_id(默认-1)
+data
+
+
+
+kind:
+0 	X = 门诊
+1 	X = 急诊
+2 	X = 住院
+
+type:
+0 	添加 X 的详细信息不需要填X_id
+1   添加编号为 X_id 的 X 对应的临床信息
+2   添加编号为 X_id 的 X 对应的问卷信息
+3   添加编号为 X_id 的 X 对应的辅助检查信息
+4   添加编号为 X_id 的 X 对应的附件信息
+
+
+接口26. 删除门诊/急诊/住院相关的信息
+客户端->服务端 								服务端->客户端
+D_id 										result 	0 成功   -1 患者不存在  -2 患者不属于该医生管理
+P_id
+kind
+type
+X_id
+Y_id(默认-1)
+
+
+
+kind:
+0 	X = 门诊
+1 	X = 急诊
+2 	X = 住院
+
+type:
+0 	删除编号为 X_id 的 X 信息，不需要填Y_id
+1   删除编号为 X_id 的 X 对应的编号为 Y_id 临床信息
+2   删除编号为 X_id 的 X 对应的编号为 Y_id 问卷信息
+3   删除编号为 X_id 的 X 对应的编号为 Y_id 辅助检查信息
+4   删除编号为 X_id 的 X 对应的编号为 Y_id 附件信息
+
+
+
+接口27. 修改门诊/急诊/住院相关的信息
+客户端->服务端 								服务端->客户端
+D_id 										result 	0 成功   -1 患者不存在  -2 患者不属于该医生管理
+P_id
+kind
+type
+X_id
+Y_id(默认-1)
+data
+
+
+
+kind:
+0 	X = 门诊
+1 	X = 急诊
+2 	X = 住院
+
+type:
+0 	修改编号为 X_id 的 X 信息，不需要填Y_id
+1   修改编号为 X_id 的 X 对应的编号为 Y_id 临床信息
+2   修改编号为 X_id 的 X 对应的编号为 Y_id 问卷信息
+3   修改编号为 X_id 的 X 对应的编号为 Y_id 辅助检查信息
+4   修改编号为 X_id 的 X 对应的编号为 Y_id 附件信息
+
+
+
+
+
+
+
+/****************************************************************************************************************************/
+
+
+
+接口28. 获取患者姓名(用于填写 就诊/临床/问卷 等)
+客户端->服务端 								服务端->客户端
+D_id										result 	0 成功   -1 患者不存在  -2 患者不属于该医生管理
+P_id										name
+											age
+											sex
+
+
+/********************************************************APP与提醒预警************************************************************/
+
+/*********************************************************************************************************************************/
