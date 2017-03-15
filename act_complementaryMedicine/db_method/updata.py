@@ -1,13 +1,31 @@
 # -*- coding:UTF-8 -*-
-
-
+from act_db.models import DoctorInfo
+from django.core.exceptions import ObjectDoesNotExist
 
 #修改指定医生信息
 #data为医生新的信息，包括D_id
 #修改成功返回True,否则返回False
 def updataDoctorInfo(data):
     #TODO
-    return False
+    #birthday需要处理一下
+    try:
+        doctor = DoctorInfo.objects.get(id=data['D_id'])
+        doctor.name = data['name']
+        doctor.sex = data['sex']
+        doctor.birthday = data['brithday']
+        doctor.userName = data['userName']
+        doctor.password = data['password']
+        doctor.cellphone = data['cellphone']
+        doctor.weChat = data['weChat']
+        doctor.mail = data['mail']
+        doctor.title = data['title']
+        doctor.hospital = data['hospital']
+        doctor.department = data['department']
+        doctor.userGroup = data['userGroup']
+        doctor.save()
+        return True
+    except:
+        return False
 
 #修改指定实验组
 #注意判断一下D_id与G_id是否正确

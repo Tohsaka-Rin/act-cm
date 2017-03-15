@@ -1,12 +1,20 @@
 # -*- coding:UTF-8 -*-
-
+from act_db.models import GroupInfo,PatientGroup
 
 #删除指定实验组
 #注意判断一下D_id与G_id是否正确，删除时注意一下删除患者与实验组对应关系那张表中的内容
 # 成功返回True，失败返回False
 def deleteExpGroup(D_id,G_id):
     #TODO
-    return False
+    try:
+
+        group = GroupInfo.objects.get(D_id=D_id,id=G_id)
+        group.delete()
+        # 没有使用外码
+        PatientGroup.objects.filter(G_id=G_id).delete()
+        return True
+    except:
+        return False
 
 
 

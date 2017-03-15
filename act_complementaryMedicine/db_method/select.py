@@ -1,6 +1,6 @@
 # -*- coding:UTF-8 -*-
-
-
+from act_db.models import DoctorInfo
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # 用户名/邮箱/手机号 重复性检验
@@ -9,7 +9,20 @@
 
 def checkExist(key,value):
     #TODO
-    return False
+    try:
+        if key == 'userName':
+            doc = DoctorInfo.objects.get(userName=value)
+        elif key == 'mail':
+            doc = DoctorInfo.objects.get(mail=value)
+        elif key == 'cellphone':
+            doc = DoctorInfo.objects.get(cellphone=value)
+        elif key == 'D_id':
+            doc = DoctorInfo.objects.get(D_id=value)
+
+        return True
+    except ObjectDoesNotExist:
+        return False
+
 
 
 

@@ -1,5 +1,5 @@
 # -*- coding:UTF-8 -*-
-
+from act_db.models import DoctorInfo
 
 # 添加新用户
 # 参数是一个字典，包含医生的所有信息
@@ -7,7 +7,16 @@
 
 def addDoctorInfo(data):
     #TODO
-    return False
+    # birthday 需要处理成Date格式
+    # registerDate会自动生成
+    try:
+        newDoctor = DoctorInfo(name=data['name'],sex=data['sex'],birthday=data['birthday'],userName=data['userName'],password=data['password'],
+                               cellphone=data['cellphone'],weChat=data['weChat'],mail=data['mail'],title=data['title'],hospital=data['hospital'],
+                               department=data['department'],userGroup=data['userGroup'])
+        newDoctor.save()
+        return True
+    except :
+        return False
 
 # 添加新的实验组
 # 成功返回True，失败返回False
