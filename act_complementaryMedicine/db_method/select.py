@@ -24,16 +24,18 @@ def getUserInfo(userName,key):
 # D_id为医生的编号
 # 以字典形式返回获取到的基本信息
 def getDoctorBasicInfo(D_id):
-    #TODO
-    return 1
+    message = {}
+    # TODO
+    return message
 
 
 # 获取医生的详细信息
 # D_id为医生的编号
 # 以字典形式返回获取到的详细信息
 def getDoctorDetailedInfo(D_id):
-    #TODO
-    return 1
+    message = {}
+    # TODO
+    return message
 
 #获取医生管理的实验组信息
 #返回一个列表，列表中每个元素都是一个字典，存储着一个实验组的信息
@@ -48,3 +50,36 @@ def getExpGroupsPatientsInfo(D_id,G_id):
     list = []
     # TODO
     return list
+
+#获取指定医生管理的所有患者的基本信息
+#返回一个列表，列表中每个元素都是一个字典，存储着一个实验组的信息
+def getPatientsBasicInfo(D_id):
+    list = []
+    # TODO
+    return list
+
+
+
+#获取指定医生管理的所有患者的基本信息
+#还要返回患者所在实验组的信息
+#注意判断一下P_id的正确性，失败返回一个空字典
+def getPatientDetailedInfo(D_id,P_id):
+    message={}
+    # TODO
+    return message
+
+
+#获取指定患者的所有家属信息基本信息
+#返回一个列表，列表中每个元素都是一个字典，存储着一个家属的信息
+def getRelationsInfo(D_id,P_id):
+    list=[]
+    # TODO
+    return list
+
+
+
+
+
+
+
+
