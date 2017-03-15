@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import demjson
 from db_method import insert,select,updata,delete
-from control_method import tools,clinic_info,emergency_info,hospital_info
+from control_method import tools,ceh_info
 
 
 def get_test(request):
@@ -351,3 +351,87 @@ def deleteRelation(request):
         return HttpResponse(js)
 
 
+#接口23
+@csrf_exempt
+def getCEHBasicInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = []
+        if select.checkExist('D_id', data['D_id']):
+            message = ceh_info.getBasicInfo(data)
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+
+
+
+
+
+#接口24
+@csrf_exempt
+def getCEHDetailedInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = []
+        if select.checkExist('D_id', data['D_id']):
+            message = ceh_info.getDetailedInfo(data)
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+
+
+
+#接口25
+@csrf_exempt
+def addCEHInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        if select.checkExist('D_id', data['D_id']):
+            if ceh_info.addInfo(data):
+                result = 0
+            else:
+                result = -1
+        else:
+            result = -1
+        js = demjson.encode([{'result': result}])
+        return HttpResponse(js)
+
+
+
+
+
+#接口26
+@csrf_exempt
+def deleteCEHInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        if select.checkExist('D_id', data['D_id']):
+            if ceh_info.deleteInfo(data):
+                result = 0
+            else:
+                result = -1
+        else:
+            result = -1
+        js = demjson.encode([{'result': result}])
+        return HttpResponse(js)
+
+
+
+#接口27
+@csrf_exempt
+def updataCEHInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        if select.checkExist('D_id', data['D_id']):
+            if ceh_info.updataInfo(data):
+                result = 0
+            else:
+                result = -1
+        else:
+            result = -1
+        js = demjson.encode([{'result': result}])
+        return HttpResponse(js)
