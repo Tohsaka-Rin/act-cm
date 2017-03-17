@@ -23,4 +23,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^get/', view.get_test),
     url(r'^post/', view.post_test),
+    url(r'^i1/',view.register),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

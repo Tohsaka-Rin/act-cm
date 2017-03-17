@@ -1,7 +1,7 @@
 # -*- coding:UTF-8 -*-
-from act_db.models import DoctorInfo
+from act_db.models import DoctorInfo,GroupInfo,PatientInfo,RelationInfo
 from django.core.exceptions import ObjectDoesNotExist
-
+import datetime
 #修改指定医生信息
 #data为医生新的信息，包括D_id
 #修改成功返回True,否则返回False
@@ -30,9 +30,16 @@ def updataDoctorInfo(data):
 #修改指定实验组
 #注意判断一下D_id与G_id是否正确
 # 成功返回True，失败返回False
-def addExpGroup(D_id,G_id,name,info):
+def updataExpGroup(D_id,G_id,name,info):
     # TODO
-    return False
+    try:
+        group = GroupInfo.objects.get(id = G_id)
+        group.name = name
+        group.information = info
+        group.save()
+        return True
+    except :
+        return False
 
 
 #修改指定患者信息，包括患者所属的实验组
@@ -40,7 +47,35 @@ def addExpGroup(D_id,G_id,name,info):
 #修改成功返回True,否则返回False
 def updataPatientInfo(data):
     #TODO
-    return False
+    try:
+        patient = PatientInfo.objects.get(P_id= data['P_id'])
+        patient.sign = data['sign']
+        patient.name = data['name']
+        patient.sex = data['sex']
+        patient.birthday = datetime.datetime.strptime(data['birthday'], "%Y-%m-%d").date()
+        patient.age = data['age']
+        patient.nation = data['nation']
+        patient.height = data['height']
+        patient.weight = data['weight']
+        patient.education = data['education']
+        patient.career = data['career']
+        patient.marriage = data['marriage']
+        patient.photo = data['photo']
+        patient.homeAddr = data['homeAddr']
+        patient.birthAddr = data['birthAddr']
+        patient.activityAddr1 = data['activityAddr1']
+        patient.activityAddr2 = data['activityAddr2']
+        patient.actionAddr = data['actionAddr']
+        patient.diastolicPressure = data['diastolicPressure']
+        patient.systolicPressure = data['systolicPressure']
+        patient.neckCircu = data['neckCircu']
+        patient.payment = data['payment']
+        patient.telephone = data['telephone']
+        patient.cellphone = data['cellphone']
+        patient.partnerPhone = data['partnerPhone']
+        patient.save()
+    except :
+        return False
 
 
 #修改指定家属信息
@@ -48,4 +83,15 @@ def updataPatientInfo(data):
 #修改成功返回True,否则返回False
 def updataRelationInfo(data):
     # TODO
-    return False
+    try:
+        relation = RelationInfo.objects.get(id=data['R_id'])
+        relation.name=data['name']
+        relation.sex=data['sex']
+        relation.telephone=data['telephone']
+        relation.cellphone=data['cellphone']
+        relation.weChate=data['weChat']
+        relation.mail=data['mail']
+        relation.homeAddr=data['homeAddr']
+        relation.save()
+    except :
+        return False

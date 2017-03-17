@@ -1,5 +1,5 @@
 # -*- coding:UTF-8 -*-
-from act_db.models import GroupInfo,PatientGroup
+from act_db.models import GroupInfo,PatientGroup,RelationInfo
 
 #删除指定实验组
 #注意判断一下D_id与G_id是否正确，删除时注意一下删除患者与实验组对应关系那张表中的内容
@@ -23,7 +23,12 @@ def deleteExpGroup(D_id,G_id):
 # 成功返回True，失败返回False
 def removePatientfromExpGroup(D_id, G_id, P_id):
     # TODO
-    return False
+    try:
+        patient = PatientGroup.objects.get(G_id = G_id, P_id = P_id)
+        patient.delete()
+        return True
+    except :
+        return False
 
 
 #删除指定患者
@@ -31,7 +36,12 @@ def removePatientfromExpGroup(D_id, G_id, P_id):
 # 成功返回True，失败返回False
 def deleteRelation(D_id, P_id, R_id):
     # TODO
-    return False
+    try:
+        relation = RelationInfo.objects.get(id = R_id)
+        relation.delete()
+        return True
+    except:
+        return False
 
 
 

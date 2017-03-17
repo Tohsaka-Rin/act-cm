@@ -47,15 +47,15 @@ def addInfo(data):
 
 def updataInfo(data):
     result = False
-    if data['type'] == 0 and insert.updataPatientCEHInfo(data):
+    if data['type'] == 0 and updata.updataPatientCEHInfo(data):
         result = True
-    elif data['type'] == 1 and insert.updataPatientClinicInfo(data):
+    elif data['type'] == 1 and updata.updataPatientClinicInfo(data):
         result = True
-    elif data['type'] == 2 and insert.updataPatientQuestionnaireInfo(data):
+    elif data['type'] == 2 and updata.updataPatientQuestionnaireInfo(data):
         result = True
-    elif data['type'] == 3 and insert.updataPatientAccessoryExaminationInfo(data):
+    elif data['type'] == 3 and updata.updataPatientAccessoryExaminationInfo(data):
         result = True
-    elif data['type'] == 4 and insert.updataPatientAttachInfo(data):
+    elif data['type'] == 4 and updata.updataPatientAttachInfo(data):
         result = True
 
     return result
@@ -63,15 +63,15 @@ def updataInfo(data):
 
 def deleteInfo(data):
     result = False
-    if data['type'] == 0 and insert.addPatientCEHInfo(data):
+    if data['type'] == 0 and delete.deletePatientCEHInfo(data):
         result = True
-    elif data['type'] == 1 and insert.addPatientClinicInfo(data):
+    elif data['type'] == 1 and delete.deletePatientClinicInfo(data):
         result = True
-    elif data['type'] == 2 and insert.addPatientQuestionnaireInfo(data):
+    elif data['type'] == 2 and delete.deletePatientQuestionnaireInfo(data):
         result = True
-    elif data['type'] == 3 and insert.addPatientAccessoryExaminationInfo(data):
+    elif data['type'] == 3 and delete.deletePatientAccessoryExaminationInfo(data):
         result = True
-    elif data['type'] == 4 and insert.addPatientAttachInfo(data):
+    elif data['type'] == 4 and delete.deletePatientAttachInfo(data):
         result = True
 
     return result
