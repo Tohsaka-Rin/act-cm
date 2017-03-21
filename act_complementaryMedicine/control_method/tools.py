@@ -29,7 +29,7 @@ def getFields():
     for key in keys:
         print "\'"+key+"\'"+",",
 
-def updataField():
+def updateField():
     keys = []
     while True:
         key = raw_input()
@@ -50,5 +50,5 @@ def addField():
         print key + " = data[" + "\'" + key + "\'" + "],",
 
 #getFields()
-updataField()
+updateField()
 #addField()

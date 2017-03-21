@@ -2,7 +2,8 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import demjson
-from db_method import insert,select,updata,delete
+from db_method import insert,select,update,delete
+from control_method import tools
 
 
 def get_test(request):
@@ -125,12 +126,12 @@ def getDoctorDetailedInfo(request):
 
 #接口7
 @csrf_exempt
-def updataDoctorInfo(request):
+def updateDoctorInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         if 'D_id' in request.session:
             data['D_id'] = request.session['D_id']
-            if updata.updataDoctorInfo(data) == True:
+            if update.updateDoctorInfo(data) == True:
                 result = 0
             else:
                 result = -1
@@ -185,11 +186,11 @@ def getExpGroups(request):
 
 #接口12
 @csrf_exempt
-def updataExpGroup(request):
+def updateExpGroup(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         if 'D_id' in request.session:
-            if updata.updataExpGroup(data['G_id'],data['name'],data['information']) == True:
+            if update.updateExpGroup(data['G_id'],data['name'],data['information']) == True:
                 result = 0
             else:
                 result = -1
@@ -288,12 +289,12 @@ def addPatientInfo(request):
 
 #接口18
 @csrf_exempt
-def updataPatientInfo(request):
+def updatePatientInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         if 'D_id' in request.session:
             data['D_id'] = request.session['D_id']
-            if updata.updataPatientInfo(data) == True:
+            if update.updatePatientInfo(data) == True:
                 result = 0
             else:
                 result = -1
@@ -316,12 +317,12 @@ def getRelationsInfo(request):
 
 #接口20
 @csrf_exempt
-def updataRelationInfo(request):
+def updateRelationInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         if 'D_id' in request.session:
             data['D_id'] = request.session['D_id']
-            if updata.updataRelationInfo(data) == True:
+            if update.updateRelationInfo(data) == True:
                 result = 0
             else:
                 result = -1
@@ -432,18 +433,18 @@ def deleteCEHInfo(request):
 
 #接口26
 @csrf_exempt
-def updataCEHInfo(request):
+def updateCEHInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = {'result':-1}
         if 'D_id' in request.session:
             data['D_id'] = request.session['D_id']
             if data['type'] == 0:
-                result = updata.updataOutPatientServiceInfo(data)
+                result = update.updateOutPatientServiceInfo(data)
             elif data['type'] == 1:
-                result = updata.updataEmergCallInfo(data)
+                result = update.updateEmergCallInfo(data)
             elif data['type'] == 2:
-                result = updata.updataInHospitalInfo(data)
+                result = update.updateInHospitalInfo(data)
             else:
                 result = False
 
@@ -516,12 +517,12 @@ def addQuestionnaireInfo(request):
         return HttpResponse(js)
 
 @csrf_exempt
-def updataClinicInfo(request):
+def updateClinicInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = {'result': -1}
         if 'D_id' in request.session:
-            if updata.updataClinicInfo(data):
+            if update.updateClinicInfo(data):
                 message['result'] = 0
 
         js = demjson.encode(message)
@@ -529,12 +530,12 @@ def updataClinicInfo(request):
 
 
 @csrf_exempt
-def updataQuestionnaireInfo(request):
+def updateQuestionnaireInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = {'result': -1}
         if 'D_id' in request.session:
-            if updata.updataQuestionnaireInfo(data['type'],data):
+            if update.updateQuestionnaireInfo(data['type'],data):
                 message['result'] = 0
 
         js = demjson.encode(message)
@@ -599,16 +600,16 @@ def addAorAEDetailedInfo(request):
 
 
 @csrf_exempt
-def updataAorAEDetailedInfo(request):
+def updateAorAEDetailedInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = {'result': -1}
         if 'D_id' in request.session:
             if data['kind'] == 0:
-                if updata.updataAccessoryExamination(data['id'],data):
+                if update.updateAccessoryExamination(data['id'],data):
                     message['result'] = 0
             else:
-                if updata.updataAttachInfo(data['id'],data):
+                if update.updateAttachInfo(data['id'],data):
                     message['result'] = 0
 
         js = demjson.encode(message)

@@ -5,7 +5,7 @@ import datetime
 #修改指定医生信息
 #data为医生新的信息，包括D_id
 #修改成功返回True,否则返回False
-def updataDoctorInfo(data):
+def updateDoctorInfo(data):
     #TODO
     #birthday需要处理一下
     try:
@@ -30,7 +30,7 @@ def updataDoctorInfo(data):
 #修改指定实验组
 #注意判断一下D_id与G_id是否正确
 # 成功返回True，失败返回False
-def updataExpGroup(G_id,name,info):
+def updateExpGroup(G_id,name,info):
     # TODO
     try:
         group = GroupInfo.objects.get(id = G_id)
@@ -45,7 +45,7 @@ def updataExpGroup(G_id,name,info):
 #修改指定患者信息，包括患者所属的实验组
 #data为患者新的信息，包括D_id，需要判断一下该患者是否归该医生所管理
 #修改成功返回True,否则返回False
-def updataPatientInfo(data):
+def updatePatientInfo(data):
     #TODO
     try:
         patient = PatientInfo.objects.get(P_id= data['P_id'])
@@ -86,7 +86,7 @@ def updataPatientInfo(data):
 #修改指定家属信息
 #data为患者新的信息，包括D_id，P_id，需要判断一下归属关系
 #修改成功返回True,否则返回False
-def updataRelationInfo(data):
+def updateRelationInfo(data):
     # TODO
     try:
         relation = RelationInfo.objects.get(id=data['R_id'])
@@ -102,7 +102,7 @@ def updataRelationInfo(data):
         return False
 
 #修改门诊信息
-def updataOutPatientServiceInfo(data):
+def updateOutPatientServiceInfo(data):
     try:
         data['date'] = datetime.datetime.strptime(data['date'], "%Y-%m-%d").date()
         obj = OutPatientServiceInfo.objects.get(id = data['OPS_id'])
@@ -129,7 +129,7 @@ def updataOutPatientServiceInfo(data):
 
 
 #修改急诊信息
-def updataEmergCallInfo(data):
+def updateEmergCallInfo(data):
     try:
         data['date'] = datetime.datetime.strptime(data['date'], "%Y-%m-%d").date()
         obj = EmergCallInfo.objects.get(id = data['EC_id'])
@@ -156,7 +156,7 @@ def updataEmergCallInfo(data):
         return False
 
 #修改住院信息
-def updataInHospitalInfo(data):
+def updateInHospitalInfo(data):
     try:
         data['date'] = datetime.datetime.strptime(data['date'], "%Y-%m-%d").date()
         obj = InHospitalInfo.objects.get(id = data['IH_id'])
@@ -184,7 +184,7 @@ def updataInHospitalInfo(data):
         return False
 
 #修改临床信息
-def updataClinicInfo(data):
+def updateClinicInfo(data):
     try:
         obj = Clinic.objects.get(id = data['Cli_id'])
         obj.P_id = data['P_id']
@@ -259,7 +259,7 @@ def updataClinicInfo(data):
         return False
 
 #修改问卷信息
-def updataQuestionnaireInfo(type,data):
+def updateQuestionnaireInfo(type,data):
     try:
         if type == 0:
             obj = ESS.objects.get(id = data['ESS_id'])
@@ -353,7 +353,7 @@ def updataQuestionnaireInfo(type,data):
 
 
 #修改附件信息
-def updataAttachInfo(A_id,data):
+def updateAttachInfo(A_id,data):
     try:
         obj = AttachInfo.objects.get(id = A_id)
         obj.P_id = data['P_id']
@@ -372,7 +372,7 @@ def updataAttachInfo(A_id,data):
 
 
 #修改附件信息
-def updataAccessoryExamination(AE_id,data):
+def updateAccessoryExamination(AE_id,data):
     try:
         obj = AccessoryExamination.objects.get(id = AE_id)
         obj.S_id = data['S_id']
