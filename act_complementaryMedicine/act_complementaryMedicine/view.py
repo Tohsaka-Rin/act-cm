@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import demjson
 from db_method import insert,select,updata,delete
-from control_method import tools,ceh_info
 
 
 def get_test(request):
@@ -33,7 +32,7 @@ def register(request):
             result = 0
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 #接口2
@@ -45,7 +44,7 @@ def repeatCheck(request):
             result = -1
         else:
             result = 0
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
 
         return HttpResponse(js)
 #接口3
@@ -53,21 +52,19 @@ def repeatCheck(request):
 def login(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        message={'result':-1,'D_id':-1}
+        message={'result':-1}
         #判断用户名是否存在
         if select.checkExist('userName',data['userName']):
             password = select.getUserInfo(data['userName'], 'password')
             # 判断密码是否正确
             if password == tools.md5(data['password']):
                 message['result'] = 0
-                message['D_id'] = select.getUserInfo(data['userName'], 'D_id')
+                request.session['D_id'] = select.getUserInfo(data['userName'], 'D_id')
             else:
                 message['result'] = -1
         else:
             message['result'] = -1
-        js = []
-        js.append(message)
-        js =  demjson.encode(js)
+        js =  demjson.encode(message)
 
         return HttpResponse(js)
 
@@ -78,14 +75,13 @@ def getDoctorBasicInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = {}
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             message = select.getDoctorBasicInfo(data['D_id'])
             message['result'] = 0
         else:
             message['result'] = -1
-        js = []
-        js.append(message)
-        js = demjson.encode(js)
+        js = demjson.encode(message)
 
         return HttpResponse(js)
 
@@ -108,7 +104,7 @@ def retrievePassword(request):
                 #TODO
             else:
                 result = -1
-        js = demjson.encode([{'result': result}])
+        js = demjson.encode({'result': result})
         return HttpResponse(js)
 
 #接口6
@@ -117,14 +113,13 @@ def getDoctorDetailedInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = {}
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             message = select.getDoctorDetailedInfo(data['D_id'])
             message['result'] = 0
         else:
             message['result'] = -1
-        js = []
-        js.append(message)
-        js = demjson.encode(js)
+        js = demjson.encode(message)
         return HttpResponse(js)
 
 
@@ -133,14 +128,15 @@ def getDoctorDetailedInfo(request):
 def updataDoctorInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             if updata.updataDoctorInfo(data) == True:
                 result = 0
             else:
                 result = -1
         else:
             result = -1
-        js = demjson.encode([{'result': result}])
+        js = demjson.encode({'result': result})
         return HttpResponse(js)
 
 #接口10
@@ -148,11 +144,15 @@ def updataDoctorInfo(request):
 def addExpGroup(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if insert.addExpGroup(data['D_id'],data['name'],data['information']) == True:
-            result = 0
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            if insert.addExpGroup(data['D_id'],data['name'],data['information']) == True:
+                result = 0
+            else:
+                result = -1
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 #接口11
@@ -160,20 +160,25 @@ def addExpGroup(request):
 def deleteExpGroup(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if delete.deleteExpGroup(data['D_id'],data['G_id']) == True:
-            result = 0
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            if delete.deleteExpGroup(data['D_id'],data['G_id']) == True:
+                result = 0
+            else:
+                result = -1
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 #接口8
 @csrf_exempt
 def getExpGroups(request):
     if request.method == 'POST':
-        data = demjson.decode(request.POST['data'])
+        data = {}
         message = []
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             message = select.getExpGroups(data['D_id'])
         js = demjson.encode(message)
         return HttpResponse(js)
@@ -183,11 +188,14 @@ def getExpGroups(request):
 def updataExpGroup(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if updata.addExpGroup(data['D_id'],data['G_id'],data['name'],data['information']) == True:
-            result = 0
+        if 'D_id' in request.session:
+            if updata.updataExpGroup(data['G_id'],data['name'],data['information']) == True:
+                result = 0
+            else:
+                result = -1
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 #接口9
@@ -196,8 +204,8 @@ def getExpGroupPatientsInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = []
-        if select.checkExist('D_id', data['D_id']):
-            message = select.getExpGroupsPatientsInfo(data['D_id'],data['G_id'])
+        if 'D_id' in request.session:
+            message = select.getExpGroupPatientsInfo(data['G_id'])
         js = demjson.encode(message)
         return HttpResponse(js)
 
@@ -207,15 +215,15 @@ def getExpGroupPatientsInfo(request):
 def addPatientToExpGroup(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if select.checkExist('D_id', data['D_id']):
-            if insert.addPatientToExpGroupdata(['D_id'],data['G_id'],data['P_id']):
+        if 'D_id' in request.session:
+            if insert.addPatientToExpGroup(data['G_id'],data['P_id']):
                 result = 0
             else:
                 result = -1
         else:
             result = -1
 
-        js = demjson.encode([{'result': result}])
+        js = demjson.encode({'result': result})
         return HttpResponse(js)
 
 #接口14
@@ -223,24 +231,25 @@ def addPatientToExpGroup(request):
 def removePatientfromExpGroup(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if select.checkExist('D_id', data['D_id']):
-            if delete.removePatientfromExpGroup(['D_id'],data['G_id'],data['P_id']):
+        if 'D_id' in request.session:
+            if delete.removePatientfromExpGroup(data['G_id'],data['P_id']):
                 result = 0
             else:
                 result = -1
         else:
             result = -1
 
-        js = demjson.encode([{'result': result}])
+        js = demjson.encode({'result': result})
         return HttpResponse(js)
 
 #接口15
 @csrf_exempt
 def getPatientsBasicInfo(request):
     if request.method == 'POST':
-        data = demjson.decode(request.POST['data'])
+        data = {}
         message = []
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             message = select.getPatientsBasicInfo(data['D_id'])
         js = demjson.encode(message)
 
@@ -252,12 +261,11 @@ def getPatientDetailedInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = []
-        if select.checkExist('D_id', data['D_id']):
-            message = select.getPatientDetailedInfo(data['D_id'],data['P_id'])
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            message = select.getPatientDetailedInfo(data['P_id'])
 
-        js = []
-        js.append(message)
-        js = demjson.encode(js)
+        js = demjson.encode(message)
 
         return HttpResponse(js)
 
@@ -267,14 +275,15 @@ def getPatientDetailedInfo(request):
 def addPatientInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             if insert.addPatientInfo(data) == True:
                 result = 0
             else:
                 result = -1
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 #接口18
@@ -282,14 +291,15 @@ def addPatientInfo(request):
 def updataPatientInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             if updata.updataPatientInfo(data) == True:
                 result = 0
             else:
                 result = -1
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 #接口19
@@ -298,8 +308,9 @@ def getRelationsInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
         message = []
-        if select.checkExist('D_id', data['D_id']):
-            message = select.getRelationsInfo(data['D_id'],data['P_id'])
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            message = select.getRelationInfos(data['P_id'])
         js = demjson.encode(message)
         return HttpResponse(js)
 
@@ -308,14 +319,15 @@ def getRelationsInfo(request):
 def updataRelationInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             if updata.updataRelationInfo(data) == True:
                 result = 0
             else:
                 result = -1
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 #接口21
@@ -323,14 +335,15 @@ def updataRelationInfo(request):
 def addRelationInfo(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if select.checkExist('D_id', data['D_id']):
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
             if insert.addRelationInfo(data) == True:
                 result = 0
             else:
                 result = -1
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 
@@ -339,94 +352,280 @@ def addRelationInfo(request):
 def deleteRelation(request):
     if request.method == 'POST':
         data = demjson.decode(request.POST['data'])
-        if select.checkExist('D_id', data['D_id']):
-            if delete.deleteRelation(data['D_id'],data['P_id'],data['R_id']) == True:
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            if delete.deleteRelation(data['R_id']) == True:
                 result = 0
             else:
                 result = -1
         else:
             result = -1
-        js = demjson.encode([{'result':result}])
+        js = demjson.encode({'result':result})
         return HttpResponse(js)
 
 
-# #接口23
-# @csrf_exempt
-# def getCEHBasicInfo(request):
-#     if request.method == 'POST':
-#         data = demjson.decode(request.POST['data'])
-#         message = []
-#         if select.checkExist('D_id', data['D_id']):
-#             message = ceh_info.getBasicInfo(data)
-#
-#         js = demjson.encode(message)
-#         return HttpResponse(js)
-#
-#
-#
-# #接口24
-# @csrf_exempt
-# def getCEHDetailedInfo(request):
-#     if request.method == 'POST':
-#         data = demjson.decode(request.POST['data'])
-#         message = []
-#         if select.checkExist('D_id', data['D_id']):
-#             message = ceh_info.getDetailedInfo(data)
-#
-#         js = demjson.encode(message)
-#         return HttpResponse(js)
-#
-#
-#
-#
-#
-# #接口25
-# @csrf_exempt
-# def addCEHInfo(request):
-#     if request.method == 'POST':
-#         data = demjson.decode(request.POST['data'])
-#         if select.checkExist('D_id', data['D_id']):
-#             if ceh_info.addInfo(data):
-#                 result = 0
-#             else:
-#                 result = -1
-#         else:
-#             result = -1
-#         js = demjson.encode([{'result': result}])
-#         return HttpResponse(js)
-#
-#
-#
-#
-#
-# #接口26
-# @csrf_exempt
-# def deleteCEHInfo(request):
-#     if request.method == 'POST':
-#         data = demjson.decode(request.POST['data'])
-#         if select.checkExist('D_id', data['D_id']):
-#             if ceh_info.deleteInfo(data):
-#                 result = 0
-#             else:
-#                 result = -1
-#         else:
-#             result = -1
-#         js = demjson.encode([{'result': result}])
-#         return HttpResponse(js)
-#
-#
-#
-# #接口27
-# @csrf_exempt
-# def updataCEHInfo(request):
-#     if request.method == 'POST':
-#         data = demjson.decode(request.POST['data'])
-#         if select.checkExist('D_id', data['D_id']):
-#             if ceh_info.updataInfo(data):
-#                 result = 0
-#             else:
-#                 result = -1
-#         else:
-#             result = -1
-#         js = demjson.encode([{'result': result}])
-#         return HttpResponse(js)
+#接口23
+@csrf_exempt
+def getCEHDetailedInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = []
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            if data['type'] == 0:
+                message = select.getPatientDetailedOutPatientServiceInfos(data['P_id'])
+            elif data['type'] == 1:
+                message = select.getPatientDetailedEmergCallInfos(data['P_id'])
+            elif data['type'] == 2:
+                message = select.getPatientDetailedInHospitalInfos( data['P_id'])
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+#接口24
+@csrf_exempt
+def addCEHInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result':-1}
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            if data['type'] == 0:
+                result = insert.addOutPatientServiceInfo(data)
+            elif data['type'] == 1:
+                result = insert.addEmergCallInfo(data)
+            elif data['type'] == 2:
+                result = insert.addInHospitalInfo(data)
+            else:
+                result = False
+
+            if result == True:
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+#接口25
+@csrf_exempt
+def deleteCEHInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result':-1}
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            if data['type'] == 0:
+                result = delete.deleteOutPatientServiceInfo(data['id'])
+            elif data['type'] == 1:
+                result = delete.deleteEmergCallInfo(data['id'])
+            elif data['type'] == 2:
+                result = delete.deleteInHospitalInfo(data['id'])
+            else:
+                result = False
+
+            if result == True:
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+#接口26
+@csrf_exempt
+def updataCEHInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result':-1}
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            if data['type'] == 0:
+                result = updata.updataOutPatientServiceInfo(data)
+            elif data['type'] == 1:
+                result = updata.updataEmergCallInfo(data)
+            elif data['type'] == 2:
+                result = updata.updataInHospitalInfo(data)
+            else:
+                result = False
+
+            if result == True:
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+# 接口27
+@csrf_exempt
+def getCorQBasicInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = []
+        if 'D_id' in request.session:
+            if data['kind'] == 0:
+                message = select.getBasicClinicInfos(data['type'],data['S_id'])
+            else:
+                message = select.getBasicQuestionnaireInfos(data['type'],data['S_id'])
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+@csrf_exempt
+def getClinicDetailedInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {}
+        if 'D_id' in request.session:
+            message = select.getDetailedClinicInfo(data['Cli_id'])
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+@csrf_exempt
+def getQuestionnaireDetailedInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {}
+        if 'D_id' in request.session:
+            message = select.getDetailedQuestionnaireInfo(data['type'],data['id'])
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+@csrf_exempt
+def addClinicInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if insert.addClinicInfo(data):
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+@csrf_exempt
+def addQuestionnaireInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if insert.addQuestionnaireInfo(data['type'],data):
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+@csrf_exempt
+def updataClinicInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if updata.updataClinicInfo(data):
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+@csrf_exempt
+def updataQuestionnaireInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if updata.updataQuestionnaireInfo(data['type'],data):
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+@csrf_exempt
+def deleteClinicInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if delete.deleteClinicInfo(data['Cli_id']):
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+@csrf_exempt
+def deleteQuestionnaireInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if delete.deleteQuestionnaireInfo(data['type'],data['id']):
+                message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+
+@csrf_exempt
+def getAorAEDetailedInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = []
+        if 'D_id' in request.session:
+            if data['kind'] == 0:
+                message = select.getDetailedAccessoryExamination(data['type'],data['S_id'])
+            else:
+                message = select.getDetailedAttachInfos(data['type'],data['S_id'])
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+@csrf_exempt
+def addAorAEDetailedInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if data['kind'] == 0:
+                if insert.addAccessoryExamination(data):
+                    message['result'] = 0
+            else:
+                if insert.addAttachInfo(data):
+                    message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+
+@csrf_exempt
+def updataAorAEDetailedInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if data['kind'] == 0:
+                if updata.updataAccessoryExamination(data['id'],data):
+                    message['result'] = 0
+            else:
+                if updata.updataAttachInfo(data['id'],data):
+                    message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+@csrf_exempt
+def deleteAorAEDetailedInfo(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = {'result': -1}
+        if 'D_id' in request.session:
+            if data['kind'] == 0:
+                if delete.deleteAccessoryExamination(data['id']):
+                    message['result'] = 0
+            else:
+                if delete.deleteAttachInfo(data['id']):
+                    message['result'] = 0
+
+        js = demjson.encode(message)
+        return HttpResponse(js)

@@ -139,7 +139,7 @@ class TrackInfo(models.Model):
 
 class AttachInfo(models.Model):
     P_id = models.CharField(max_length=10)
-    time = models.DateField(auto_now_add=True)
+    date = models.DateField(auto_now_add=True)
     type = models.IntegerField()                # 0 OutPatientService   1 Emerg   2 InHospital   3 AccessoryExamination
     S_id = models.IntegerField()
     D_id = models.CharField(max_length=10)
@@ -482,7 +482,7 @@ class EmergCallInfo(models.Model):
 
 class InHospitalInfo(models.Model):
     P_id = models.CharField(max_length=10, null=False)
-    time = models.DateField(null=False)
+    date = models.DateField(null=False)
     place = models.CharField(max_length=250, null=False)
     commonIcu = models.CharField(max_length=1, null=False)
     symptom = models.CharField(max_length=15, null=False)
@@ -666,6 +666,17 @@ class SGRO(models.Model):
     H17_5 = models.CharField(max_length=1, null=False)
     H18 = models.CharField(max_length=1, null=False)
     actEff = models.CharField(max_length=100, null=False)
+
+
+class AccessoryExamination(models.Model):
+    type = models.IntegerField(null=False)  # 0 OutPatientService   1 Emerg   2 InHospital
+    S_id = models.IntegerField(null=False)
+    date = models.DateField()
+    AE_type = models.IntegerField()
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=250)
+    D_id = models.IntegerField()
+
 
 
 # created by JK@buaa, 2017/3/17
