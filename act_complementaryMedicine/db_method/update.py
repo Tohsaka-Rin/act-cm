@@ -14,7 +14,6 @@ def updateDoctorInfo(data):
         doctor.sex = data['sex']
         doctor.birthday = data['brithday']
         doctor.userName = data['userName']
-        doctor.password = data['password']
         doctor.cellphone = data['cellphone']
         doctor.weChat = data['weChat']
         doctor.mail = data['mail']
@@ -25,6 +24,16 @@ def updateDoctorInfo(data):
         doctor.save()
         return True
     except:
+        return False
+
+# update password for doctor
+def updatePassword(D_id, pwd):
+    try:
+        doc = DoctorInfo.objects.get(id=D_id)
+        doc.password = pwd
+        doc.save()
+        return True
+    except ObjectDoesNotExist:
         return False
 
 #修改指定实验组

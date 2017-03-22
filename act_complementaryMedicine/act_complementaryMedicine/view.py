@@ -630,3 +630,42 @@ def deleteAorAEDetailedInfo(request):
 
         js = demjson.encode(message)
         return HttpResponse(js)
+
+
+# 密码修改，加上旧密码？
+@csrf_exempt
+def updateDocPassword(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        if 'D_id' in request.session:
+            data['D_id'] = request.session['D_id']
+            if update.updatePassword(data['D_id'], data['password']):
+                result = 0
+            else:
+                result = -1
+        else:
+            result = -1
+        js = demjson.encode({'result': result})
+        return HttpResponse(js)
+
+# Cat &&MRC 返回近两周的sum
+@csrf_exempt
+def getCat_MRCSum2Weeks(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = []
+        if 'D_id' in request.session:
+            message = select.getMsg2Weeks(data['P_id'], 1)
+        js = demjson.encode(message)
+        return HttpResponse(js)
+
+# 近两周暴露水平
+@csrf_exempt
+def getExploure2Weeks(request):
+    if request.method == 'POST':
+        data = demjson.decode(request.POST['data'])
+        message = []
+        if 'D_id' in request.session:
+            message = select.getMsg2Weeks(data['P_id'], 2)
+        js = demjson.encode(message)
+        return HttpResponse(js)

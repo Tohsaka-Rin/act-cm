@@ -1,5 +1,5 @@
 # -*- coding:UTF-8 -*-
-from act_db.models import DoctorInfo,GroupInfo,PatientInfo,PatientGroup,RelationInfo,OutPatientServiceInfo,EmergCallInfo,InHospitalInfo,Clinic,ESS,MBQ,SGRO,AttachInfo,AccessoryExamination
+from act_db.models import DoctorInfo,GroupInfo,PatientInfo,PatientGroup,RelationInfo,OutPatientServiceInfo,EmergCallInfo,InHospitalInfo,Clinic,ESS,MBQ,SGRO,AttachInfo,AccessoryExamination,CATandMRC,PmExposure
 from django.core.exceptions import ObjectDoesNotExist
 from control_method import tools
 
@@ -69,8 +69,8 @@ def getDoctorDetailedInfo(D_id):
     # TODO
     # date数据要处理一下
     try:
-        value = DoctorInfo.objects.get(id=D_id).values_list('name', 'sex', 'birthday','userName', 'password','cellphone','weChat','mail', 'title', 'hospital','department','userGroup','registerDate')
-        keys = ['name', 'sex', 'birthday','userName', 'password','cellphone','weChat','mail', 'title', 'hospital','department']
+        value = DoctorInfo.objects.get(id=D_id).values_list('name', 'sex', 'birthday','userName', 'cellphone','weChat','mail', 'title', 'hospital','department','userGroup','registerDate')
+        keys = ['name', 'sex', 'birthday','userName','cellphone','weChat','mail', 'title', 'hospital','department']
         value[2] = value[2].strftime("%Y-%m-%d")
         value[12] = value[12].strftime("%Y-%m-%d")
         message = tools.dictPackage(keys, value)
@@ -410,3 +410,24 @@ def getDetailedAccessoryExamination(type,S_id):
         pass
 
     return list
+
+# get the message of a patient for the last 2 weeks
+# type = 1 is CAT and MRC sum, type = 2 is explosure
+def getMsg2Weeks(P_id, type):
+    from django.utils.timezone import now, timedelta
+    end = now().date()
+    start = end - timedelta(weeks=2)
+    message={}
+    try:
+        if type == 1:
+            values = CATandMRC.objects.filter(date_range=(start, end), P_id=P_id).values_list('catSum')
+        elif type == 2:
+            values = PmExposure.objects.filter(date_range=(start, end), P_id=P_id).values_list('exposure')
+        else:
+            return message
+        keys = ['day1', 'day2', 'day3', 'day4', 'day5', 'day6', 'day7',
+                'day8', 'day9', 'day10', 'day11', 'day12', 'day13', 'day14']
+        message = tools.dictPackage(keys, values)
+    except:
+        pass
+    return message
